@@ -110,7 +110,38 @@ void setup()
       tft.drawString("PM4.0", 10, 160);
       tft.drawString("PM10.0", 10, 210);
 
-  //--------------------------PM2.5---------------------
+  //--------------------------BMP280---------------------
+ Serial.println(("BMP280 test"));
+  unsigned BMP280_status;
+  BMP280_status = bmp.begin(BMP280_ADDRESS);
+  Serial.println("?");
+  // Serial.println(status);
+  if (!BMP280_status) {
+    Serial.println(F("Could not find a valid BMP280 sensor, check wiring or "
+                      "try a different address!"));
+    Serial.print("SensorID was: 0x"); Serial.println(bmp.sensorID(),16);
+    Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
+    Serial.print("   ID of 0x56-0x58 represents a BMP 280,\n");
+    Serial.print("        ID of 0x60 represents a BME 280.\n");
+    Serial.print("        ID of 0x61 represents a BME 680.\n");
+    while (1) delay(10);
+  }
+     else {
+     Serial.print("Detected BMP280. Proceeding...");
+   }
+  /* Default settings from the datasheet. */
+  bmp.setSampling(Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
+                  Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
+                  Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
+                  Adafruit_BMP280::FILTER_X16,      /* Filtering. */
+                  Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
+
+  delay(1000);
+      tft.fillScreen(TFT_BLACK);
+      tft.fillRect(0, 0,320,80, TFT_YELLOW);
+      tft.setFreeFont(FSB18);
+      tft.setTextColor(TFT_BLACK);
+      tft.drawString("Check BMP280 (pressure sensor) status in serial monitor", 40, 15); // tft.drawString([a string], [x-coor], [y-coor])
 
 }
 
