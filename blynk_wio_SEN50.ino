@@ -11,10 +11,10 @@ TFT_eSprite spr = TFT_eSprite(&tft);
 #include <WiFiClient.h>
 #include <BlynkSimpleWioTerminal.h>
 #include <SensirionI2CSen5x.h>
-// #include <Adafruit_BMP280.h>
+#include <Adafruit_BMP280.h>
 
 #include <Wire.h>
-// #include <SPI.h> // from BMP280 code
+#include <SPI.h> // from BMP280 code
 
 #define MAXBUF_REQUIREMENT 48
 #if (defined(I2C_BUFFER_LENGTH) &&                 \
