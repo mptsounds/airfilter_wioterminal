@@ -160,6 +160,9 @@ void loop()
     float massConcentrationPm2p5;
     float massConcentrationPm4p0;
     float massConcentrationPm10p0;
+    float bmpITemperature; //Pressure sensor 1 (initial)
+    float bmpIPressure;
+    float bmpIAltitude;
 
     error = sen5x.readMeasuredValuesSen50(
         massConcentrationPm1p0, massConcentrationPm2p5, massConcentrationPm4p0,
@@ -234,4 +237,17 @@ void loop()
     Blynk.virtualWrite(V1, massConcentrationPm2p5);
     Blynk.virtualWrite(V2, massConcentrationPm4p0);
     Blynk.virtualWrite(V3, massConcentrationPm10p0);
+
+    Serial.print(F("Temperature = "));
+    Serial.print(bmp.readTemperature());
+    Serial.println(" *C");
+    Serial.print(F("Pressure = "));
+    Serial.print(bmp.readPressure());
+    Serial.println(" Pa");
+    Serial.print(F("Approx altitude = "));
+    Serial.print(bmp.readAltitude(1013.25)); /* Adjusted to local forecast! */
+    Serial.println(" m");
+    Serial.println();
+    delay(2000);
+
 }
