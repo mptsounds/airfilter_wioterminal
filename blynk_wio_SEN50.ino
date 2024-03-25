@@ -62,7 +62,7 @@ void setup()
   //--------------------------Blynk---------------------
   Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
   // Setup a function to be called every second
-  //timer.setInterval(1000L, myTimerEvent);
+  // timer.setInterval(1000, myTimerEvent);
 
   //--------------------------LCD---------------------
       tft.begin();
@@ -84,7 +84,7 @@ void setup()
     sen5x.begin(Wire);
 
     // SEN50 Error handling:
-    uint16_t error; //declares a var named "error" as an unsigned 16-bit integer.
+    uint16_t error; // declares a var named "error" as an unsigned 16-bit integer.
     char errorMessage[256]; // declares an array named errorMessage capable of holding 256 characters
     error = sen5x.deviceReset();
     if (error) { // if this error is non-zero
@@ -190,19 +190,16 @@ void loop()
   Blynk.run();
   timer.run();
 
+// Read SEN50 values:
   uint16_t error;
   char errorMessage[256];
 
     delay(1000);
 
-    // Read Measurement
     float massConcentrationPm1p0;
     float massConcentrationPm2p5;
     float massConcentrationPm4p0;
     float massConcentrationPm10p0;
-    float bmpITemperature; //Pressure sensor 1 (initial)
-    float bmpIPressure;
-    float bmpIAltitude;
 
     error = sen5x.readMeasuredValuesSen50(
         massConcentrationPm1p0, massConcentrationPm2p5, massConcentrationPm4p0,
@@ -274,10 +271,16 @@ void loop()
         spr.pushSprite(90, 210);
         spr.deleteSprite();
 }
+    // Send value to SEN50 virtual pins
     Blynk.virtualWrite(V0, massConcentrationPm1p0);
     Blynk.virtualWrite(V1, massConcentrationPm2p5);
     Blynk.virtualWrite(V2, massConcentrationPm4p0);
     Blynk.virtualWrite(V3, massConcentrationPm10p0);
+
+// Read BMP280 values:
+    float BMP_Starting_Temperature; // pressure sensor 1 (before filter)
+    float BMP_Starting_Pressure;
+    float BMP_Starting_Altitude;
 
     Serial.print(F("Temperature = "));
     Serial.print(bmp.readTemperature());
