@@ -277,24 +277,43 @@ void loop()
     Blynk.virtualWrite(V2, massConcentrationPm4p0);
     Blynk.virtualWrite(V3, massConcentrationPm10p0);
 
-// Read BMP280 values:
-    float BMP_Starting_Temperature; // pressure sensor 1 (before filter)
-    float BMP_Starting_Pressure;
-    float BMP_Starting_Altitude;
 
-    Serial.print(F("Temperature = "));
-    Serial.print(bmp.readTemperature());
-    Serial.print(" *C");
-    Serial.print("\t");
-    Serial.print(F("Pressure = "));
-    Serial.print(bmp.readPressure());
-    Serial.print(" Pa");
-    Serial.print("\t");
-    Serial.print(F("Approx altitude = "));
-    Serial.print(bmp.readAltitude(1013.25)); /* Adjusted to local forecast! */
-    Serial.print(" m");
-    Serial.print("\t");
-    Serial.println();
-    delay(2000);
+  // Read BMP280 values: (for now we only have 1 sensor)
+  float BMP_Starting_Temperature; // pressure sensor 1 (before filter)
+  float BMP_Starting_Pressure = bmp.readPressure();
+  float BMP_Starting_Altitude;
+
+  // TO-DO: proper error handling function:
+
+  // Show values in serial monitor:
+  Serial.print(F("Temperature = "));
+  Serial.print(bmp.readTemperature());
+  Serial.print(" *C");
+  Serial.print("\t");
+  Serial.print(F("Pressure = "));
+  Serial.print(bmp.readPressure());
+  Serial.print(" Pa");
+  Serial.print("\t");
+  Serial.print(F("Approx altitude = "));
+  Serial.print(bmp.readAltitude(1013.25)); /* Adjusted to local forecast! */
+  Serial.print(" m");
+  Serial.print("\t");
+  Serial.println();
+  delay(2000);
+
+  //Sprite buffer for Pressure value:
+  spr.createSprite(150, 20);
+  spr.fillSprite(TFT_BLACK);
+  spr.setFreeFont(&FreeMonoBold12pt7b);
+  if(BMP_Starting_Pressure<=101325)
+    spr.setTextColor(TFT_GREEN);
+  else
+    spr.setTextColor(TFT_YELLOW);
+  spr.drawFloat(BMP_Starting_Pressure, 2, 0, 0); //display number
+  spr.pushSprite(190, 85); //push to LCD
+  spr.deleteSprite(); //clear buffer
+
+  // Send value to SEN50 virtual pins
+  Blynk.virtualWrite(V4, BMP_Starting_Pressure);
 
 }
