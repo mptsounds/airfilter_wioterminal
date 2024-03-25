@@ -28,6 +28,7 @@ SensirionI2CSen5x sen5x;
 Adafruit_BMP280 bmp; // I2C
 //###############################################
 
+// Wi-Fi credentials:
 char ssid[] = "Toong-Guest";
 char pass[] = "toong@2017";
 
@@ -50,20 +51,25 @@ BLYNK_CONNECTED()
 //  Blynk.virtualWrite(V2, millis() / 1000);
 //}
 
+
+
+//###############################################
 void setup()
 {
   // Debug console
   Serial.begin(115200);
+
   //--------------------------Blynk---------------------
   Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
   // Setup a function to be called every second
   //timer.setInterval(1000L, myTimerEvent);
+
   //--------------------------LCD---------------------
       tft.begin();
       tft.setRotation(3);
       tft.fillScreen(TFT_BLACK);
 
-      tft.fillRect(0, 0,320,50, TFT_YELLOW);
+      tft.fillRect(0, 0, 320, 50, TFT_YELLOW);
       tft.setFreeFont(&FreeSerifBold18pt7b); // select Free, Serif, Bold, 18pt
       tft.setTextColor(TFT_BLACK);
       tft.drawString("FAN CLEANNING", 10, 15); // drawString syntax: (text, xpos, ypos, [font size])
@@ -72,20 +78,21 @@ void setup()
       tft.setFreeFont(&FreeSerif18pt7b);
       tft.drawString("OPERATING", 60, 100);
       tft.drawString("Please wait 10 sec", 30, 160);
-      
+
   //--------------------------SEN50---------------------
     Wire.begin();
     sen5x.begin(Wire);
 
-    uint16_t error;
-    char errorMessage[256];
+    // SEN50 Error handling:
+    uint16_t error; //declares a var named "error" as an unsigned 16-bit integer.
+    char errorMessage[256]; // declares an array named errorMessage capable of holding 256 characters
     error = sen5x.deviceReset();
-    if (error) {
-        Serial.print("Error trying to execute deviceReset(): ");
-        errorToString(error, errorMessage, 256);
-        Serial.println(errorMessage);
+    if (error) { // if this error is non-zero
+        Serial.print("Error trying to execute deviceReset(): "); // at which step the error happens
+        errorToString(error, errorMessage, 256); // converts the numerical error code into a human-readable error message and stores it in the errorMessage buffer
+        Serial.println(errorMessage); // specific error code
     }
-    // Start Measurement
+    // Start Measurement:
     error = sen5x.startMeasurement();
     if (error) {
         Serial.print("Error trying to execute startMeasurement(): ");
@@ -96,6 +103,36 @@ void setup()
   Serial.print("Fan Cleaning");
   Serial.println("");
   sen5x.startFanCleaning();
+
+
+  //--------------------------BMP280--------------------- // only 1 sensor for now
+  // Serial.println(("BMP280 test"));
+  unsigned BMP280_status;
+  BMP280_status = bmp.begin(BMP280_ADDRESS);
+  // Serial.println("?");
+  Serial.println("BMP280 status: " + String(BMP280_status));
+  if (!BMP280_status) { // if BMP280_status <> 1
+    Serial.println(F("Could not find a valid BMP280 sensor. Check wiring (after TURNING OFF the device) or "
+                      "try a different address!"));
+    Serial.print("SensorID was: 0x"); Serial.println(bmp.sensorID(),16);
+    Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
+    Serial.print("   ID of 0x56-0x58 represents a BMP 280,\n");
+    Serial.print("        ID of 0x60 represents a BME 280.\n");
+    Serial.print("        ID of 0x61 represents a BME 680.\n");
+    while (1) delay(10);
+  }
+     else {
+     Serial.print("Detected BMP280. Proceeding...");
+   }
+  /* Default settings from the datasheet. */
+  bmp.setSampling(Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
+                  Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
+                  Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
+                  Adafruit_BMP280::FILTER_X16,      /* Filtering. */
+                  Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
+
+
+  //-------------------MAIN GRAPHICS---------------------
   // delay(10000);
   //     tft.fillScreen(TFT_BLACK);
   //     tft.fillRect(0, 0,320,50, TFT_YELLOW);
@@ -143,41 +180,11 @@ void setup()
       tft.drawString("000.00", 190, 210);
 
 
-  //--------------------------BMP280---------------------
- Serial.println(("BMP280 test"));
-  unsigned BMP280_status;
-  BMP280_status = bmp.begin(BMP280_ADDRESS);
-  Serial.println("?");
-  // Serial.println(status);
-  if (!BMP280_status) {
-    Serial.println(F("Could not find a valid BMP280 sensor, check wiring or "
-                      "try a different address!"));
-    Serial.print("SensorID was: 0x"); Serial.println(bmp.sensorID(),16);
-    Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
-    Serial.print("   ID of 0x56-0x58 represents a BMP 280,\n");
-    Serial.print("        ID of 0x60 represents a BME 280.\n");
-    Serial.print("        ID of 0x61 represents a BME 680.\n");
-    while (1) delay(10);
-  }
-     else {
-     Serial.print("Detected BMP280. Proceeding...");
-   }
-  /* Default settings from the datasheet. */
-  bmp.setSampling(Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
-                  Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
-                  Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
-                  Adafruit_BMP280::FILTER_X16,      /* Filtering. */
-                  Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
-
-  // delay(1000);
-  //     tft.fillScreen(TFT_BLACK);
-  //     tft.fillRect(0, 0,320,80, TFT_YELLOW);
-  //     tft.setFreeFont(&FreeSerifBold18pt7b);
-  //     tft.setTextColor(TFT_BLACK);
-  //     tft.drawString("Check BMP280 (pressure sensor) status in serial monitor", 40, 15); // tft.drawString([a string], [x-coor], [y-coor])
-
 }
 
+
+
+//###############################################
 void loop()
 {
   Blynk.run();
@@ -242,7 +249,7 @@ void loop()
         spr.drawFloat(massConcentrationPm2p5, 2, 0, 0); 
         spr.pushSprite(90, 110);
         spr.deleteSprite();
-        
+
       //sprite buffer for pm4p0
         spr.createSprite(70, 40);
         spr.fillSprite(TFT_BLACK);
