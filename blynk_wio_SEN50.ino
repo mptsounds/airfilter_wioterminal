@@ -96,19 +96,52 @@ void setup()
   Serial.print("Fan Cleaning");
   Serial.println("");
   sen5x.startFanCleaning();
-  delay(10000);
-      tft.fillScreen(TFT_BLACK);
-      tft.fillRect(0, 0,320,50, TFT_YELLOW);
-      tft.setFreeFont(&FreeSerifBold18pt7b);
-      tft.setTextColor(TFT_BLACK);
-      tft.drawString("AIR QUALITY", 40, 15);
+  // delay(10000);
+  //     tft.fillScreen(TFT_BLACK);
+  //     tft.fillRect(0, 0,320,50, TFT_YELLOW);
+  //     tft.setFreeFont(&FreeSerifBold18pt7b);
+  //     tft.setTextColor(TFT_BLACK);
+  //     tft.drawString("AIR QUALITY", 40, 15);
 
+  //     tft.setTextColor(TFT_WHITE);
+  //     tft.setFreeFont(&FreeSerif18pt7b);
+  //     tft.drawString("PM1.0", 10, 60);
+  //     tft.drawString("PM2.5", 10, 110);
+  //     tft.drawString("PM4.0", 10, 160);
+  //     tft.drawString("PM10.0", 10, 210);
+
+  delay(10000); // draw the graphics
+      // Left block header (Air quality):
+      tft.fillScreen(TFT_BLACK);
+      tft.fillRect(0, 0, 170, 40, TFT_YELLOW);
+      tft.setFreeFont(&FreeSerifBold12pt7b);
+      tft.setTextColor(TFT_BLACK);
+      tft.drawString("AIR QUALITY", 3, 10);
+      // Left block static text (PM1.0, PM2.5,..):
       tft.setTextColor(TFT_WHITE);
-      tft.setFreeFont(&FreeSerif18pt7b);
-      tft.drawString("PM1.0", 10, 60);
-      tft.drawString("PM2.5", 10, 110);
-      tft.drawString("PM4.0", 10, 160);
-      tft.drawString("PM10.0", 10, 210);
+      tft.setFreeFont(&FreeSerif12pt7b);
+      tft.drawString("PM1.0", 3, 60);
+      tft.drawString("PM2.5", 3, 110);
+      tft.drawString("PM4.0", 3, 160);
+      tft.drawString("PM10.0", 3, 210);
+      // Right block header (PRESSURE):
+      tft.fillRect(175, 0, 160, 40, TFT_YELLOW);
+      tft.setFreeFont(&FreeSerifBold12pt7b);
+      tft.setTextColor(TFT_BLACK);
+      tft.drawString("PRESSURE", 183, 10);
+      // Right block static text (Init pressure, Final, Diff (in Pa)):
+      tft.setTextColor(TFT_WHITE);
+      tft.setFreeFont(&FreeSerif12pt7b);
+      tft.drawString("Start (Pa):", 190, 60);
+      tft.drawString("End (Pa):", 190, 120);
+      tft.drawString("Difference:", 190, 185);
+      // TEST: Right block dynamic text - mock values:
+      tft.setTextColor(TFT_GREEN);
+      tft.setFreeFont(&FreeSerif12pt7b);
+      tft.drawString("100867.25", 190, 85);
+      tft.drawString("100867.63", 190, 145);
+      tft.drawString("000.00", 190, 210);
+
 
   //--------------------------BMP280---------------------
  Serial.println(("BMP280 test"));
@@ -136,12 +169,12 @@ void setup()
                   Adafruit_BMP280::FILTER_X16,      /* Filtering. */
                   Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
 
-  delay(1000);
-      tft.fillScreen(TFT_BLACK);
-      tft.fillRect(0, 0,320,80, TFT_YELLOW);
-      tft.setFreeFont(&FreeSerifBold18pt7b);
-      tft.setTextColor(TFT_BLACK);
-      tft.drawString("Check BMP280 (pressure sensor) status in serial monitor", 40, 15); // tft.drawString([a string], [x-coor], [y-coor])
+  // delay(1000);
+  //     tft.fillScreen(TFT_BLACK);
+  //     tft.fillRect(0, 0,320,80, TFT_YELLOW);
+  //     tft.setFreeFont(&FreeSerifBold18pt7b);
+  //     tft.setTextColor(TFT_BLACK);
+  //     tft.drawString("Check BMP280 (pressure sensor) status in serial monitor", 40, 15); // tft.drawString([a string], [x-coor], [y-coor])
 
 }
 
@@ -186,51 +219,52 @@ void loop()
         Serial.print(massConcentrationPm10p0);
         Serial.print("\n");
      //Sprite buffer for pm1p0
-        spr.createSprite(120, 40); //create buffer
+        // spr.createSprite(120, 40); //create buffer
+        spr.createSprite(70, 40); //create buffer
         spr.fillSprite(TFT_BLACK); //fill background color of buffer
-        spr.setFreeFont(&FreeMonoBold18pt7b);
+        spr.setFreeFont(&FreeMonoBold12pt7b);
         if(massConcentrationPm1p0<=15)
           spr.setTextColor(TFT_GREEN);
         else
           spr.setTextColor(TFT_RED);
         spr.drawFloat(massConcentrationPm1p0, 2, 0, 0); //display number 
-        spr.pushSprite(150, 60); //push to LCD 
+        spr.pushSprite(90, 60); //push to LCD 
         spr.deleteSprite(); //clear buffer
 
      //sprite buffer for pm2p5
-        spr.createSprite(120, 40);
+        spr.createSprite(70, 40);
         spr.fillSprite(TFT_BLACK);
-        spr.setFreeFont(&FreeMonoBold18pt7b);
+        spr.setFreeFont(&FreeMonoBold12pt7b);
         if(massConcentrationPm1p0<=15)
           spr.setTextColor(TFT_GREEN);
         else
           spr.setTextColor(TFT_RED);
         spr.drawFloat(massConcentrationPm2p5, 2, 0, 0); 
-        spr.pushSprite(150, 110);
+        spr.pushSprite(90, 110);
         spr.deleteSprite();
         
       //sprite buffer for pm4p0
-        spr.createSprite(120, 40);
+        spr.createSprite(70, 40);
         spr.fillSprite(TFT_BLACK);
-        spr.setFreeFont(&FreeMonoBold18pt7b);
+        spr.setFreeFont(&FreeMonoBold12pt7b);
         if(massConcentrationPm1p0<=15)
           spr.setTextColor(TFT_GREEN);
         else
           spr.setTextColor(TFT_RED);
         spr.drawFloat(massConcentrationPm4p0, 2, 0, 0); 
-        spr.pushSprite(150, 160);
+        spr.pushSprite(90, 160);
         spr.deleteSprite();
 
       //sprite buffer for pm10p0
-        spr.createSprite(120, 40);
+        spr.createSprite(70, 40);
         spr.fillSprite(TFT_BLACK);
-        spr.setFreeFont(&FreeMonoBold18pt7b);
+        spr.setFreeFont(&FreeMonoBold12pt7b);
         if(massConcentrationPm1p0<=15)
           spr.setTextColor(TFT_GREEN);
         else
           spr.setTextColor(TFT_RED);
         spr.drawFloat(massConcentrationPm10p0, 2, 0, 0); 
-        spr.pushSprite(150, 210);
+        spr.pushSprite(90, 210);
         spr.deleteSprite();
 }
     Blynk.virtualWrite(V0, massConcentrationPm1p0);
