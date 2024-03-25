@@ -4,7 +4,7 @@
 #define BLYNK_PRINT Serial
 #include <Arduino.h>
 #include "TFT_eSPI.h"
-// #include "Free_Fonts.h" // don't need this file cuz changed tft.setFreeFont format
+// #include "Free_Fonts.h" // used a diff way to set font type & size
 TFT_eSPI tft;
 TFT_eSprite spr = TFT_eSprite(&tft);
 #include <rpcWiFi.h>
@@ -169,15 +169,15 @@ void setup()
       // Right block static text (Init pressure, Final, Diff (in Pa)):
       tft.setTextColor(TFT_WHITE);
       tft.setFreeFont(&FreeSerif12pt7b);
-      tft.drawString("Start (Pa):", 190, 60);
-      tft.drawString("End (Pa):", 190, 120);
+      tft.drawString("Sensor 1 (Pa):", 190, 60);
+      tft.drawString("Sensor 2 (Pa):", 190, 120);
       tft.drawString("Difference:", 190, 185);
       // TEST: Right block dynamic text - mock values:
-      tft.setTextColor(TFT_GREEN);
-      tft.setFreeFont(&FreeSerif12pt7b);
-      tft.drawString("100867.25", 190, 85);
-      tft.drawString("100867.63", 190, 145);
-      tft.drawString("000.00", 190, 210);
+      // tft.setTextColor(TFT_GREEN);
+      // tft.setFreeFont(&FreeSerif12pt7b);
+      // tft.drawString("100867.25", 190, 85);
+      // tft.drawString("100867.63", 190, 145);
+      // tft.drawString("000.00", 190, 210);
 
 
 }
