@@ -284,13 +284,16 @@ void loop()
 
     Serial.print(F("Temperature = "));
     Serial.print(bmp.readTemperature());
-    Serial.println(" *C");
+    Serial.print(" *C");
+    Serial.print("\t");
     Serial.print(F("Pressure = "));
     Serial.print(bmp.readPressure());
-    Serial.println(" Pa");
+    Serial.print(" Pa");
+    Serial.print("\t");
     Serial.print(F("Approx altitude = "));
     Serial.print(bmp.readAltitude(1013.25)); /* Adjusted to local forecast! */
-    Serial.println(" m");
+    Serial.print(" m");
+    Serial.print("\t");
     Serial.println();
     delay(2000);
 
