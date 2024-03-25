@@ -4,7 +4,7 @@
 #define BLYNK_PRINT Serial
 #include <Arduino.h>
 #include "TFT_eSPI.h"
-#include "Free_Fonts.h"
+// #include "Free_Fonts.h" // don't need this file cuz changed tft.setFreeFont format
 TFT_eSPI tft;
 TFT_eSprite spr = TFT_eSprite(&tft);
 #include <rpcWiFi.h>
@@ -64,12 +64,12 @@ void setup()
       tft.fillScreen(TFT_BLACK);
 
       tft.fillRect(0, 0,320,50, TFT_YELLOW);
-      tft.setFreeFont(FSB18);
+      tft.setFreeFont(&FreeSerifBold18pt7b); // select Free, Serif, Bold, 18pt
       tft.setTextColor(TFT_BLACK);
       tft.drawString("FAN CLEANNING", 10, 15); // drawString syntax: (text, xpos, ypos, [font size])
 
       tft.setTextColor(TFT_WHITE);
-      tft.setFreeFont(FS18);
+      tft.setFreeFont(&FreeSerif18pt7b);
       tft.drawString("OPERATING", 60, 100);
       tft.drawString("Please wait 10 sec", 30, 160);
       
@@ -99,12 +99,12 @@ void setup()
   delay(10000);
       tft.fillScreen(TFT_BLACK);
       tft.fillRect(0, 0,320,50, TFT_YELLOW);
-      tft.setFreeFont(FSB18);
+      tft.setFreeFont(&FreeSerifBold18pt7b);
       tft.setTextColor(TFT_BLACK);
       tft.drawString("AIR QUALITY", 40, 15);
 
       tft.setTextColor(TFT_WHITE);
-      tft.setFreeFont(FS18);
+      tft.setFreeFont(&FreeSerif18pt7b);
       tft.drawString("PM1.0", 10, 60);
       tft.drawString("PM2.5", 10, 110);
       tft.drawString("PM4.0", 10, 160);
@@ -139,7 +139,7 @@ void setup()
   delay(1000);
       tft.fillScreen(TFT_BLACK);
       tft.fillRect(0, 0,320,80, TFT_YELLOW);
-      tft.setFreeFont(FSB18);
+      tft.setFreeFont(&FreeSerifBold18pt7b);
       tft.setTextColor(TFT_BLACK);
       tft.drawString("Check BMP280 (pressure sensor) status in serial monitor", 40, 15); // tft.drawString([a string], [x-coor], [y-coor])
 
@@ -188,7 +188,7 @@ void loop()
      //Sprite buffer for pm1p0
         spr.createSprite(120, 40); //create buffer
         spr.fillSprite(TFT_BLACK); //fill background color of buffer
-        spr.setFreeFont(FMB18); //set font type 
+        spr.setFreeFont(&FreeMonoBold18pt7b);
         if(massConcentrationPm1p0<=15)
           spr.setTextColor(TFT_GREEN);
         else
@@ -200,7 +200,7 @@ void loop()
      //sprite buffer for pm2p5
         spr.createSprite(120, 40);
         spr.fillSprite(TFT_BLACK);
-        spr.setFreeFont(FMB18);
+        spr.setFreeFont(&FreeMonoBold18pt7b);
         if(massConcentrationPm1p0<=15)
           spr.setTextColor(TFT_GREEN);
         else
@@ -212,7 +212,7 @@ void loop()
       //sprite buffer for pm4p0
         spr.createSprite(120, 40);
         spr.fillSprite(TFT_BLACK);
-        spr.setFreeFont(FMB18);
+        spr.setFreeFont(&FreeMonoBold18pt7b);
         if(massConcentrationPm1p0<=15)
           spr.setTextColor(TFT_GREEN);
         else
@@ -224,7 +224,7 @@ void loop()
       //sprite buffer for pm10p0
         spr.createSprite(120, 40);
         spr.fillSprite(TFT_BLACK);
-        spr.setFreeFont(FMB18);
+        spr.setFreeFont(&FreeMonoBold18pt7b);
         if(massConcentrationPm1p0<=15)
           spr.setTextColor(TFT_GREEN);
         else
