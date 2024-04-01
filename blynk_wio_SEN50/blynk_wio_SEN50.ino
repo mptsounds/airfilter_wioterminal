@@ -2,8 +2,8 @@
 #define BLYNK_TEMPLATE_NAME         "Quickstart Template"
 #define BLYNK_AUTH_TOKEN            "559-aXOVdHaiRiybcUt_J8HGcaFYR0tS"
 #define BLYNK_PRINT Serial
-#include <Arduino.h>
-#include "TFT_eSPI.h"
+#include <Arduino.h> // UI-related: Compilation warmings, v2.3.2 
+#include "TFT_eSPI.h" // to-do: copy this to UNO code - test
 // #include "Free_Fonts.h" // used a diff way to set font type & size
 TFT_eSPI tft;
 TFT_eSprite spr = TFT_eSprite(&tft);
@@ -12,7 +12,7 @@ TFT_eSprite spr = TFT_eSprite(&tft);
 #include <BlynkSimpleWioTerminal.h>
 #include <SensirionI2CSen5x.h>
 #include <Adafruit_BMP280.h>
-
+#include <Adafruit_Sensor.h> // from BMP280 code
 #include <Wire.h>
 #include <SPI.h> // from BMP280 code
 
@@ -24,13 +24,34 @@ TFT_eSprite spr = TFT_eSprite(&tft);
 #endif
 SensirionI2CSen5x sen5x;
 
-#define BMP280_ADDRESS 0x76
-Adafruit_BMP280 bmp; // I2C
+// I2C communication:
+// #define BMP280_ADDRESS_1 0x76
+// #define BMP280_ADDRESS_2 0x77
+#define BMP280_ADDRESS_1 0x77
+#define BMP280_ADDRESS_2 0x76
+
+Adafruit_BMP280 bmp1; // I2C. Object for sensor 1
+Adafruit_BMP280 bmp2; // Object for sensor 2
+
+// SPI communication:
+// #define BMP_SCL 23 // 3rd pin, SCK. Pin 23 (PIN_SPI_SCLK)
+// #define BMP_SDO 21 // 6th pin, MISO (Master IN Slave OUT). Pin 21 (PIN_SPI_MISO)
+// #define BMP_SDA 19 // 4th pin, MOSI (Master OUT Slave IN). Pin 19 (PIN_SPI_MOSI)
+
+// #define BMP_CSB1 24 // 5th pin bmp1 (Slave SELECT). Pin 24 (PIN_SPI_SS)
+// #define BMP_CSB2 26 // 5th pin bmp2 (Slave SELECT). Pin 26 // try another pin
+
+// Adafruit_BMP280 bmp1(BMP_CSB1, BMP_SDA, BMP_SDO, BMP_SCL); // declare pins for BMP280 sensors
+// Adafruit_BMP280 bmp2(BMP_CSB2, BMP_SDA, BMP_SDO, BMP_SCL);
+
 //###############################################
 
 // Wi-Fi credentials:
 char ssid[] = "Toong-Guest";
 char pass[] = "toong@2017";
+
+// char ssid[] = "Sai Gon Sky Home 102";
+// char pass[] = "@1234102";
 
 BlynkTimer timer;
 
@@ -107,14 +128,27 @@ void setup()
 
   //--------------------------BMP280--------------------- // only 1 sensor for now
   // Serial.println(("BMP280 test"));
-  unsigned BMP280_status;
-  BMP280_status = bmp.begin(BMP280_ADDRESS);
+  // pinMode(PIN_SPI_SS, OUTPUT);
+  // digitalWrite(PIN_SPI_SS, HIGH); // making the Wio Terminal the SPI controller
+
+//Set the I2C address of your breakout board  
+
+  unsigned BMP280_status_1;
+  unsigned BMP280_status_2;
+
+  // BMP280_status_1 = bmp1.begin();
+  // BMP280_status_2 = bmp2.begin();
+
+  BMP280_status_1 = bmp1.begin(BMP280_ADDRESS_1);
+  BMP280_status_2 = bmp2.begin(BMP280_ADDRESS_2);
   // Serial.println("?");
-  Serial.println("BMP280 status: " + String(BMP280_status));
-  if (!BMP280_status) { // if BMP280_status <> 1
+  Serial.println("BMP280 1 status: " + String(BMP280_status_1));
+  Serial.println("BMP280 2 status: " + String(BMP280_status_2));
+
+  if (!BMP280_status_1) { // if BMP280_status_1 <> 1
     Serial.println(F("Could not find a valid BMP280 sensor. Check wiring (after TURNING OFF the device) or "
                       "try a different address!"));
-    Serial.print("SensorID was: 0x"); Serial.println(bmp.sensorID(),16);
+    Serial.print("SensorID was: 0x"); Serial.println(bmp1.sensorID(),16);
     Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
     Serial.print("   ID of 0x56-0x58 represents a BMP 280,\n");
     Serial.print("        ID of 0x60 represents a BME 280.\n");
@@ -125,7 +159,12 @@ void setup()
      Serial.print("Detected BMP280. Proceeding...");
    }
   /* Default settings from the datasheet. */
-  bmp.setSampling(Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
+  bmp1.setSampling(Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
+                  Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
+                  Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
+                  Adafruit_BMP280::FILTER_X16,      /* Filtering. */
+                  Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
+  bmp2.setSampling(Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
                   Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
                   Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
                   Adafruit_BMP280::FILTER_X16,      /* Filtering. */
@@ -280,22 +319,22 @@ void loop()
 
   // Read BMP280 values: (for now we only have 1 sensor)
   float BMP_Starting_Temperature; // pressure sensor 1 (before filter)
-  float BMP_Starting_Pressure = bmp.readPressure();
+  float BMP_Starting_Pressure = bmp1.readPressure();
   float BMP_Starting_Altitude;
 
   // TO-DO: proper error handling function:
 
   // Show values in serial monitor:
   Serial.print(F("Temperature = "));
-  Serial.print(bmp.readTemperature());
+  Serial.print(bmp1.readTemperature());
   Serial.print(" *C");
   Serial.print("\t");
   Serial.print(F("Pressure = "));
-  Serial.print(bmp.readPressure());
+  Serial.print(bmp1.readPressure());
   Serial.print(" Pa");
   Serial.print("\t");
   Serial.print(F("Approx altitude = "));
-  Serial.print(bmp.readAltitude(1013.25)); /* Adjusted to local forecast! */
+  Serial.print(bmp1.readAltitude(1013.25)); /* Adjusted to local forecast! */
   Serial.print(" m");
   Serial.print("\t");
   Serial.println();
