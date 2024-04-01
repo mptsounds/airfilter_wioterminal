@@ -21,7 +21,7 @@ TFT_eSprite spr = TFT_eSprite(&tft);
 #define BMP_SDA (19) // 4th pin, MOSI (Master OUT Slave IN). Pin 19 (PIN_SPI_MOSI)
 
 #define BMP_CSB1 (24) // 5th pin bmp1 (Slave SELECT). Pin 24 (PIN_SPI_SS)
-#define BMP_CSB2 (32) // 5th pin bmp2 (Slave SELECT). Tried: pin 26, 32, 
+#define BMP_CSB2 (13) // 5th pin bmp2 (Slave SELECT). Tried: pin 7, 13, 16, 26, 32
 
 // Current pins: 3.3V to Pin 1, GND to 6, SCL to 23, MOSI to 19, CS1 to 24, MISO to 21, CS2 see above.
 
@@ -58,10 +58,6 @@ void setup() {
   // Set chip select pins as outputs
   pinMode(BMP_CSB1, OUTPUT);
   pinMode(BMP_CSB2, OUTPUT);
-
-  // Set chip select pins high to deselect both sensors initially
-  // digitalWrite(BMP_CSB1, HIGH);
-  // digitalWrite(BMP_CSB2, HIGH);
   
   Serial.println("Starting BMP280 device 1...");
   Serial.println(bmp1.begin());
@@ -70,7 +66,7 @@ void setup() {
     Serial.println("Sensor BMP280 device 1 was not found.");
     // while (1);
   }
-  Serial.println("Initialize BMP280 1 completed.");
+  // Serial.println("Initialize BMP280 1 completed.");
   delay(2000);
 
   Serial.println("Starting BMP280 device 2...");
@@ -81,8 +77,12 @@ void setup() {
     Serial.println("Sensor BMP280 device 2 was not found.");
     //  while (1);
   }
-  Serial.println("Initialize BMP280 2 completed.");
+  // Serial.println("Initialize BMP280 2 completed.");
   delay(2000);
+
+  // // Set chip select pins high to deselect both sensors initially
+  // digitalWrite(BMP_CSB1, HIGH);
+  // digitalWrite(BMP_CSB2, HIGH);
 
 }  
 
@@ -91,12 +91,16 @@ void loop() {
   Blynk.run();
   timer.run();
 
+  // digitalWrite(BMP_CSB1, LOW);  // Select sensor 1
+
   float pressure = bmp1.readPressure();
   Serial.print("Pressure 1 = ");
   Serial.print(pressure);
   Serial.print("Pa,   ");
   Serial.print("\t");
   delay(100);
+
+  // digitalWrite(BMP_CSB1, LOW);  // Select sensor 1
 
   float pressure2 = bmp2.readPressure();
   Serial.print("Pressure 2 = ");
