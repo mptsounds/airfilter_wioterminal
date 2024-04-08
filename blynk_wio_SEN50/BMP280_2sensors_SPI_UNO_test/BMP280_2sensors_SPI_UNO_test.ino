@@ -25,17 +25,23 @@ void setup() {
   digitalWrite(BMP_CSB1, HIGH);
   digitalWrite(BMP_CSB2, HIGH);
 
+  // delay(2000);
+
+  // Serial.print("\t");
   Serial.println("Starting BMP280 device 1...");
-  Serial.println(bmp1.begin());
+  Serial.println("Sensor 1 status: " + String(bmp1.begin()));
 
   if (!bmp1.begin()) {
     Serial.println("Sensor BMP280 device 1 was not found.");
   //   while (1);
   }
   // Serial.println("Initialize BMP280 1 completed.");
+
   delay(2000);
 
   Serial.println("Starting BMP280 device 2...");
+  Serial.println("Sensor 2 status: " + String(bmp2.begin()));
+
 
   if (!bmp2.begin()) {
     Serial.println("Sensor BMP280 device 2 was not found.");
@@ -51,14 +57,14 @@ void loop() {
   float pressure = bmp1.readPressure();
   Serial.print("Pressure 1 = ");
   Serial.print(pressure);
-  Serial.print("Pa,   ");
+  Serial.print(" Pa,   ");
   Serial.print("\t");
   delay(100);
 
   float pressure2 = bmp2.readPressure();
   Serial.print("Pressure 2 = ");
   Serial.print(pressure2);
-  Serial.print("Pa,   ");
+  Serial.print(" Pa,   ");
   Serial.println();
   delay(100);
 
