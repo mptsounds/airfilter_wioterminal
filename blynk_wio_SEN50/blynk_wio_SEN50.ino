@@ -314,29 +314,56 @@ void loop()
 
 
   // Read BMP280 values: (for now we only have 1 sensor)
-  float BMP_Starting_Temperature; // pressure sensor 1 (before filter)
-  float BMP_Starting_Pressure = bmp1.readPressure();
-  float BMP_Starting_Altitude;
+  float BMP280_1_Temperature; // pressure sensor 1 values (before filter)
+  float BMP280_1_Pressure = bmp1.readPressure();
+  float BMP280_1_Altitude;
+  float BMP280_2_Temperature; // pressure sensor 2 values (after filter)
+  float BMP280_2_Pressure = bmp2.readPressure();
+  float BMP280_2_Altitude;
+  float BMP280_Pressure_Difference = abs(BMP280_1_Pressure - BMP280_2_Pressure);
 
   // TO-DO: proper error handling function:
 
   // Show values in serial monitor:
-  Serial.print(F("Temperature = "));
+  Serial.print(F("Temperature 1 = "));
   Serial.print(bmp1.readTemperature());
   Serial.print(" *C");
   Serial.print("\t");
-  Serial.print(F("Pressure = "));
+  Serial.print(F("Pressure 1 = "));
   Serial.print(bmp1.readPressure());
   Serial.print(" Pa");
   Serial.print("\t");
-  Serial.print(F("Approx altitude = "));
+  Serial.print(F("Approx altitude 1 = "));
   Serial.print(bmp1.readAltitude(1013.25)); /* Adjusted to local forecast! */
   Serial.print(" m");
   Serial.print("\t");
   Serial.println();
-  delay(2000);
 
-  //Sprite buffer for Pressure value:
+  delay(100);
+
+  Serial.print(F("Temperature 2 = "));
+  Serial.print(bmp2.readTemperature());
+  Serial.print(" *C");
+  Serial.print("\t");
+  Serial.print(F("Pressure 2 = "));
+  Serial.print(bmp2.readPressure());
+  Serial.print(" Pa");
+  Serial.print("\t");
+  Serial.print(F("Approx altitude 2 = "));
+  Serial.print(bmp2.readAltitude(1013.25)); /* Adjusted to local forecast! */
+  Serial.print(" m");
+  Serial.print("\t");
+  Serial.println();
+
+  delay(100);
+
+  Serial.print(F("Pressure DIFFERENCE = "));
+  Serial.print(BMP280_Pressure_Difference);
+  Serial.println();
+
+  delay(1000);
+
+  //Sprite buffer for Pressure 1 value:
   spr.createSprite(150, 20);
   spr.fillSprite(TFT_BLACK);
   spr.setFreeFont(&FreeMonoBold12pt7b);
