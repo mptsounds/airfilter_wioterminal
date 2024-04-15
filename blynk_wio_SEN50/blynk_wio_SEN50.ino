@@ -367,15 +367,40 @@ void loop()
   spr.createSprite(150, 20);
   spr.fillSprite(TFT_BLACK);
   spr.setFreeFont(&FreeMonoBold12pt7b);
-  if(BMP_Starting_Pressure<=101325)
+  if(BMP280_1_Pressure>=101325)
     spr.setTextColor(TFT_GREEN);
   else
     spr.setTextColor(TFT_YELLOW);
-  spr.drawFloat(BMP_Starting_Pressure, 2, 0, 0); //display number
+  spr.drawFloat(BMP280_1_Pressure, 2, 0, 0); //display number
   spr.pushSprite(190, 85); //push to LCD
   spr.deleteSprite(); //clear buffer
 
-  // Send value to SEN50 virtual pins
-  Blynk.virtualWrite(V4, BMP_Starting_Pressure);
+  //Sprite buffer for Pressure 2 value:
+  spr.createSprite(150, 20);
+  spr.fillSprite(TFT_BLACK);
+  spr.setFreeFont(&FreeMonoBold12pt7b);
+  if(BMP280_2_Pressure>=101325)
+    spr.setTextColor(TFT_GREEN);
+  else
+    spr.setTextColor(TFT_YELLOW);
+  spr.drawFloat(BMP280_2_Pressure, 2, 0, 0); //display number
+  spr.pushSprite(190, 145); //push to LCD
+  spr.deleteSprite(); //clear buffer
+
+  //Sprite buffer for Pressure Difference value:
+  spr.createSprite(150, 20);
+  spr.fillSprite(TFT_BLACK);
+  spr.setFreeFont(&FreeMonoBold12pt7b);
+  if(BMP280_1_Pressure>=101325)
+    spr.setTextColor(TFT_GREEN);
+  else
+    spr.setTextColor(TFT_YELLOW);
+  spr.drawFloat(BMP280_Pressure_Difference, 2, 0, 0); //display number
+  spr.pushSprite(190, 210); //push to LCD
+  spr.deleteSprite(); //clear buffer
+
+  // Send value to virtual pins (NOT SURE WHAT THIS FUNCTION DOES.. CHECK LATER)
+  Blynk.virtualWrite(V4, BMP280_1_Pressure);
+  Blynk.virtualWrite(V5, BMP280_2_Pressure);
 
 }
