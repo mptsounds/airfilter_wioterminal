@@ -24,25 +24,19 @@ TFT_eSprite spr = TFT_eSprite(&tft);
 #endif
 SensirionI2CSen5x sen5x;
 
-// I2C communication:
-// #define BMP280_ADDRESS_1 0x76
-// #define BMP280_ADDRESS_2 0x77
-#define BMP280_ADDRESS_1 0x77
-#define BMP280_ADDRESS_2 0x76
+// BMP280 Sensor 1 - I2C communication:
+#define BMP280_ADDRESS_1 0x76
 
-Adafruit_BMP280 bmp1; // I2C. Object for sensor 1
-Adafruit_BMP280 bmp2; // Object for sensor 2
+// BMP280 Sensor 2 - SPI communication:
+#define BMP_SCL PIN_SPI_SCK // 3rd pin of BMP280, SCK. Pin 23 on Wio Terminal
+#define BMP_SDO PIN_SPI_MISO // 6th pin, MISO (Master IN Slave OUT). Pin 21
+#define BMP_SDA PIN_SPI_MOSI // 4th pin, MOSI (Master OUT Slave IN). Pin 19
+#define BMP_CSB2 PIN_SPI_SS // 5th pin bmp1 (Slave SELECT). Pin 24
 
-// SPI communication:
-// #define BMP_SCL 23 // 3rd pin, SCK. Pin 23 (PIN_SPI_SCLK)
-// #define BMP_SDO 21 // 6th pin, MISO (Master IN Slave OUT). Pin 21 (PIN_SPI_MISO)
-// #define BMP_SDA 19 // 4th pin, MOSI (Master OUT Slave IN). Pin 19 (PIN_SPI_MOSI)
+// Objects for BMP sensors:
+Adafruit_BMP280 bmp1; // I2C
+Adafruit_BMP280 bmp2(BMP_CSB2, BMP_SDA, BMP_SDO, BMP_SCL); // SPI
 
-// #define BMP_CSB1 24 // 5th pin bmp1 (Slave SELECT). Pin 24 (PIN_SPI_SS)
-// #define BMP_CSB2 26 // 5th pin bmp2 (Slave SELECT). Pin 26 // try another pin
-
-// Adafruit_BMP280 bmp1(BMP_CSB1, BMP_SDA, BMP_SDO, BMP_SCL); // declare pins for BMP280 sensors
-// Adafruit_BMP280 bmp2(BMP_CSB2, BMP_SDA, BMP_SDO, BMP_SCL);
 
 //###############################################
 
@@ -126,27 +120,17 @@ void setup()
   sen5x.startFanCleaning();
 
 
-  //--------------------------BMP280--------------------- // only 1 sensor for now
-  // Serial.println(("BMP280 test"));
-  // pinMode(PIN_SPI_SS, OUTPUT);
-  // digitalWrite(PIN_SPI_SS, HIGH); // making the Wio Terminal the SPI controller
-
-//Set the I2C address of your breakout board  
+  //--------------------------BMP280---------------------
+  // Sensor 1 setup: 
 
   unsigned BMP280_status_1;
-  unsigned BMP280_status_2;
-
-  // BMP280_status_1 = bmp1.begin();
-  // BMP280_status_2 = bmp2.begin();
 
   BMP280_status_1 = bmp1.begin(BMP280_ADDRESS_1);
-  BMP280_status_2 = bmp2.begin(BMP280_ADDRESS_2);
   // Serial.println("?");
-  Serial.println("BMP280 1 status: " + String(BMP280_status_1));
-  Serial.println("BMP280 2 status: " + String(BMP280_status_2));
+  Serial.println("BMP280 1 status: " + String(BMP280_status_1)); // status = "1" means detected
 
   if (!BMP280_status_1) { // if BMP280_status_1 <> 1
-    Serial.println(F("Could not find a valid BMP280 sensor. Check wiring (after TURNING OFF the device) or "
+    Serial.println(F("Could not find the valid BMP280 1 sensor. Check wiring (after TURNING OFF the device) or "
                       "try a different address!"));
     Serial.print("SensorID was: 0x"); Serial.println(bmp1.sensorID(),16);
     Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
@@ -157,6 +141,8 @@ void setup()
   }
      else {
      Serial.print("Detected BMP280. Proceeding...");
+     Serial.println();
+
    }
   /* Default settings from the datasheet. */
   bmp1.setSampling(Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
@@ -169,6 +155,16 @@ void setup()
                   Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
                   Adafruit_BMP280::FILTER_X16,      /* Filtering. */
                   Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
+
+  // Serial.println("Starting BMP280 device 2...");
+  Serial.println("BMP280 2 status: " + String(bmp2.begin())); // status = "1" means detected
+
+  if (!bmp2.begin()) {
+    Serial.println(F("Could not find the valid BMP280 2 sensor. Check wiring (after TURNING OFF the device)"));
+  //   while (1);
+  }
+  // Serial.println("Initialize BMP280 2 completed.");
+
 
 
   //-------------------MAIN GRAPHICS---------------------
