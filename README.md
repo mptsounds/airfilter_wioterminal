@@ -3,11 +3,11 @@ For running Seeeduino Wio Terminal with these sensors:
 - PM2.5 sensor: Sensirion SEN50
 - Pressure sensors x2: BMP280
 
+*Proper housekeeping will be done (proper folder struct etc.) near the end of this proj. Everything will possibly be uploaded to a different repo.*
+
 --
 # IMPORTANT #
-This code is not optimised. As of now:
-- The Wio Terminal needs to be connected to a Wi-Fi for this code to run. No error will be displayed if it cannot connect. Change the Wi-fi name & password accordingly b4 use.
-- Only 1 BMP280 sensor's connected.
+Latest test code is in this file: [blynk_wio_SEN50/BMP280_2sensors_SPI_Wio_test/*BMP280_2sensors_SPI_Wio_test.ino*](https://github.com/mptsounds/airfilter_wioterminal/blob/3b7e96e41223d983c9aca6e93e53a8fa2b6ff305/blynk_wio_SEN50/BMP280_2sensors_SPI_Wio_test/BMP280_2sensors_SPI_Wio_test.ino)
 
 --
 # RESOURCES #
@@ -22,9 +22,17 @@ SEN50:		 https://github.com/Sensirion/arduino-i2c-sen5x
 
 BMP280:		 https://github.com/adafruit/Adafruit_BMP280_Library
 
+--
 
 --
-# USAGE INSTRUCTIONS #
+
+--
+
+--
+# ========== work in progress ========== #
+
+--
+# USAGE INSTRUCTIONS (Under construction)#
 To compile & upload blynk_wio_SEN50.ino from a new PC:
 
 1. Install Arduino
