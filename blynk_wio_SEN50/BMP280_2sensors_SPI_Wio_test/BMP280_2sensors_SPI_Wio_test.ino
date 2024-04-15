@@ -113,15 +113,20 @@
 #include <SPI.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP280.h>
+// #include <Wire.h>
 
-#define BMP_SCL 23 // 3rd pin of BMP280, SCK. Pin 23 (PIN_SPI_SCLK)
-#define BMP_SDO 21 // 6th pin, MISO (Master IN Slave OUT). Pin 21 (PIN_SPI_MISO)
-#define BMP_SDA 19 // 4th pin, MOSI (Master OUT Slave IN). Pin 19 (PIN_SPI_MOSI)
+#define BMP_SCL PIN_SPI_SCK // 3rd pin of BMP280, SCK. Pin 23 (PIN_SPI_SCK)
+#define BMP_SDO PIN_SPI_MISO // 6th pin, MISO (Master IN Slave OUT). Pin 21 (PIN_SPI_MISO)
+#define BMP_SDA PIN_SPI_MOSI // 4th pin, MOSI (Master OUT Slave IN). Pin 19 (PIN_SPI_MOSI)
 
-#define BMP_CSB1 24 // 5th pin bmp1 (Slave SELECT). Pin 24 (PIN_SPI_SS)
-#define BMP_CSB2 32 // 5th pin bmp2 (Slave SELECT). Tried: pin 7, 13, 16, 26, 32
+#define BMP_CSB1 PIN_SPI_SS // 5th pin bmp1 (Slave SELECT). Pin 24 (PIN_SPI_SS)
+#define BMP_CSB2 32 // 5th pin bmp2 (Slave SELECT). Tried: pin 7, 13, 16, 26, 32, 33
 
 // Currently: 3.3V to Pin 1, GND to 6, SCK to 23, MOSI to 19, CS1 to 24, MISO to 21, CS2 see above.
+
+#define BMP280_ADDRESS_1 0x77
+  // BMP280_REGISTER_CONTROL = 0xF4,
+  // BMP280_REGISTER_PRESSUREDATA = 0xF7,
 
 
 Adafruit_BMP280 bmp1(BMP_CSB1, BMP_SDA, BMP_SDO, BMP_SCL);
@@ -129,16 +134,17 @@ Adafruit_BMP280 bmp1(BMP_CSB1, BMP_SDA, BMP_SDO, BMP_SCL);
 Adafruit_BMP280 bmp2(BMP_CSB2, BMP_SDA, BMP_SDO, BMP_SCL);
 
 
+
 void setup() {
+
   Serial.begin(9600);
 
-  // Set chip select pins as outputs
-  pinMode(BMP_CSB1, OUTPUT);
-  pinMode(BMP_CSB2, OUTPUT);
+  // SPI.begin();
+  // bmp1.begin();
 
-  // Set chip select pins high to deselect both sensors initially
-  digitalWrite(BMP_CSB1, HIGH);
-  digitalWrite(BMP_CSB2, HIGH);
+  // // Set chip select pins high to deselect both sensors initially
+  // digitalWrite(BMP_CSB1, HIGH);
+  // digitalWrite(BMP_CSB2, HIGH);
 
   delay(5000);
 
@@ -165,10 +171,15 @@ void setup() {
   // Serial.println("Initialize BMP280 2 completed.");
   delay(2000);
 
+  // // Set chip select pins high to deselect both sensors initially
+  // digitalWrite(BMP_CSB1, HIGH);
+  // digitalWrite(BMP_CSB2, HIGH);
 
 }  
 
 void loop() {
+  digitalWrite(BMP_CSB1, LOW);
+
   float pressure = bmp1.readPressure();
   Serial.print("Pressure 1 = ");
   Serial.print(pressure);
@@ -176,11 +187,18 @@ void loop() {
   Serial.print("\t");
   delay(100);
 
+  digitalWrite(BMP_CSB1, HIGH);
+
+  digitalWrite(BMP_CSB2, LOW);
+
   float pressure2 = bmp2.readPressure();
   Serial.print("Pressure 2 = ");
   Serial.print(pressure2);
   Serial.print(" Pa,   ");
   Serial.println();
   delay(100);
+
+  digitalWrite(BMP_CSB2, LOW);
+
 
 }
